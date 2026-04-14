@@ -3,17 +3,17 @@ import pandas as pd
 import numpy as np
 import pickle
 
-# 1. Load the trained assets at the start
+# 1. Load the trained assets with (1) suffix
 try:
     model = pickle.load(open('random_forest_classifier (1).pkl', 'rb'))
     scaler = pickle.load(open('scaler (1).pkl', 'rb'))
     le = pickle.load(open('label_encoder (1).pkl', 'rb'))
 except FileNotFoundError:
-    st.error("Model or Scaler files not found. Ensure .pkl files are in the same directory as this script.")
+    st.error("Model or Scaler files not found. Ensure .pkl files with ' (1)' are in the same directory.")
     st.stop()
 
 # 2. Define the exact training column order
-train_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI', 
+train_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI',
               'Gender_Male', 'family_history_with_overweight_yes', 'FAVC_yes', 
               'CAEC_Frequently', 'CAEC_Sometimes', 'CAEC_no', 'SMOKE_yes', 'SCC_yes', 
               'CALC_Frequently', 'CALC_Sometimes', 'CALC_no', 'MTRANS_Bike', 
@@ -43,12 +43,10 @@ with col2:
     calc = st.selectbox("Alcohol consumption", ["Sometimes", "Frequently", "Always", "no"])
     mtrans = st.selectbox("Transportation used", ["Public_Transportation", "Automobile", "Walking", "Motorbike", "Bike"])
 
-# 4. Prediction Logic (Preprocessing is handled here)
+# 4. Prediction Logic
 if st.button("Predict Weight Category", key="predict_final"):
-    # Calculate BMI
     bmi_val = weight / (height ** 2)
-    
-    # Manual encoding to match X_train structure
+
     input_dict = {
         'Age': age, 'Height': height, 'Weight': weight, 'FCVC': fcvc, 'NCP': ncp,
         'CH2O': ch2o, 'FAF': faf, 'TUE': tue, 'BMI': bmi_val,
@@ -69,15 +67,18 @@ if st.button("Predict Weight Category", key="predict_final"):
         'MTRANS_Walking': 1 if mtrans == 'Walking' else 0
     }
 
-    # Create DataFrame and reorder columns
+    # Convert to DataFrame and reorder columns
     input_df = pd.DataFrame([input_dict])[train_cols]
 
-    # Scale and Predict
+    # Scale the input before predicting
     scaled_input = scaler.transform(input_df.values)
+    
+    # Predict
     prediction = model.predict(scaled_input)
     final_label = le.inverse_transform(prediction)
 
     st.success(f"Result: {final_label[0]}")
+    st.info(f"BMI: {bmi_val:.2f}")
     st.info(f"BMI: {bmi_val:.2f}")
     result = model.predict(data)
 
