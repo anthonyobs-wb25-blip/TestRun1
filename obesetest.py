@@ -4,9 +4,9 @@ import numpy as np
 import pickle
 
 # Load assets
-model = pickle.load(open('random_forest_classifier.pkl', 'rb'))
-scaler = pickle.load(open('scaler.pkl', 'rb'))
-le = pickle.load(open('label_encoder.pkl', 'rb'))
+model = pickle.load(open('random_forest_classifier.pkl (1)', 'rb'))
+scaler = pickle.load(open('scaler.pkl (1)', 'rb'))
+le = pickle.load(open('label_encoder.pkl (1)', 'rb'))
 
 # Exact training column order
 train_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI', 'Gender_Male', 'family_history_with_overweight_yes', 'FAVC_yes', 'CAEC_Frequently', 'CAEC_Sometimes', 'CAEC_no', 'SMOKE_yes', 'SCC_yes', 'CALC_Frequently', 'CALC_Sometimes', 'CALC_no', 'MTRANS_Bike', 'MTRANS_Motorbike', 'MTRANS_Public_Transportation', 'MTRANS_Walking']
