@@ -3,13 +3,14 @@ import pandas as pd
 import numpy as np
 import pickle
 
-# 1. Load the trained assets
+# 1. Load the trained assets at the start
 try:
     model = pickle.load(open('random_forest_classifier.pkl', 'rb'))
     scaler = pickle.load(open('scaler.pkl', 'rb'))
     le = pickle.load(open('label_encoder.pkl', 'rb'))
 except FileNotFoundError:
-    st.error("Model files not found. Please ensure .pkl files are in the same directory.")
+    st.error("Model or Scaler files not found. Ensure .pkl files are in the same directory as this script.")
+    st.stop()
 
 # 2. Define the exact training column order
 train_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI', 
@@ -42,12 +43,12 @@ with col2:
     calc = st.selectbox("Alcohol consumption", ["Sometimes", "Frequently", "Always", "no"])
     mtrans = st.selectbox("Transportation used", ["Public_Transportation", "Automobile", "Walking", "Motorbike", "Bike"])
 
-# 4. Prediction Logic
-if st.button("Predict Weight Category", key="predict_btn_v3"):
+# 4. Prediction Logic (Preprocessing is handled here)
+if st.button("Predict Weight Category", key="predict_final"):
     # Calculate BMI
     bmi_val = weight / (height ** 2)
     
-    # Map inputs to match the 24 dummy columns
+    # Manual encoding to match X_train structure
     input_dict = {
         'Age': age, 'Height': height, 'Weight': weight, 'FCVC': fcvc, 'NCP': ncp,
         'CH2O': ch2o, 'FAF': faf, 'TUE': tue, 'BMI': bmi_val,
@@ -68,19 +69,16 @@ if st.button("Predict Weight Category", key="predict_btn_v3"):
         'MTRANS_Walking': 1 if mtrans == 'Walking' else 0
     }
 
-    # Create DataFrame and ensure column order is identical to X_train
-    input_df = pd.DataFrame([input_dict])
-    input_df = input_df[train_cols]
+    # Create DataFrame and reorder columns
+    input_df = pd.DataFrame([input_dict])[train_cols]
 
-    # Scale data
+    # Scale and Predict
     scaled_input = scaler.transform(input_df.values)
-
-    # Predict
     prediction = model.predict(scaled_input)
     final_label = le.inverse_transform(prediction)
 
-    st.success(f"The predicted category is: {final_label[0]}")
-    st.info(f"Calculated BMI: {bmi_val:.2f}")
+    st.success(f"Result: {final_label[0]}")
+    st.info(f"BMI: {bmi_val:.2f}")
     result = model.predict(data)
 
     st.success(f"Predicted Class: {result[0]}")
