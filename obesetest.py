@@ -5,9 +5,9 @@ import pickle
 
 # 1. Load the trained assets at the start
 try:
-    model = pickle.load(open('random_forest_classifier.pkl', 'rb'))
-    scaler = pickle.load(open('scaler.pkl', 'rb'))
-    le = pickle.load(open('label_encoder.pkl', 'rb'))
+    model = pickle.load(open('random_forest_classifier (1).pkl', 'rb'))
+    scaler = pickle.load(open('scaler (1).pkl', 'rb'))
+    le = pickle.load(open('label_encoder (1).pkl', 'rb'))
 except FileNotFoundError:
     st.error("Model or Scaler files not found. Ensure .pkl files are in the same directory as this script.")
     st.stop()
